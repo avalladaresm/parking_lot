@@ -1,26 +1,32 @@
 import { useState } from 'react'
+import { io } from 'socket.io-client';
+
+const socket = io("https://parking-lot--api.herokuapp.com/my-namespace", { path: '/socket.io/my-namespace/' });
+socket.on('connect', () => {
+  console.log('connected')
+})
 
 const ParkingGrid = () => {
   const [_parkingLot, _setParkingLot] = useState([{
     id: 1,
     lot: 'A3',
     isOccupied: false,
-    gridStart:'col-start-1 row-start-3'
+    gridStart: 'col-start-1 row-start-3'
   }, {
     id: 2,
     lot: 'D2',
     isOccupied: false,
-    gridStart:'col-start-4 row-start-2'
+    gridStart: 'col-start-4 row-start-2'
   }, {
     id: 3,
     lot: 'B5',
     isOccupied: false,
-    gridStart:'col-start-2 row-start-5'
+    gridStart: 'col-start-2 row-start-5'
   }, {
     id: 4,
     lot: 'E6',
     isOccupied: false,
-    gridStart:'col-start-5 row-start-6'
+    gridStart: 'col-start-5 row-start-6'
   }])
   const [_isOccupied, _setIsOccupied] = useState<boolean>(false)
 
@@ -31,6 +37,8 @@ const ParkingGrid = () => {
         : pl
     );
     _setParkingLot(updatedParkingLot)
+    console.log(updatedParkingLot.filter(upl => upl.id)[0].isOccupied)
+    socket.emit('parking-event', lotId, updatedParkingLot.filter(upl => upl.id)[0].isOccupied)
   }
 
   return (
