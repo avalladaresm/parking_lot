@@ -5,7 +5,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { ArrowsExpandIcon, LogoutIcon, MinusIcon, PlusIcon } from '@heroicons/react/outline'
 import mqtt from 'mqtt'
 
-const client = mqtt.connect('ws://ioticos.org/mqtt', { port: 8093, username: 'c6p3PVo5pHlfWVv', password: 'R1qfPuEQbTe9IYd', clientId: '2423432', clean: true })
+const client = mqtt.connect('wss://ioticos.org/mqtt', { port: 8093, username: 'c6p3PVo5pHlfWVv', password: 'R1qfPuEQbTe9IYd', clientId: '2423432', clean: true })
 client.setMaxListeners(0)
 
 const Home = () => {
