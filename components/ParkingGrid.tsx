@@ -1,60 +1,55 @@
-import { useState } from 'react'
-import { io } from 'socket.io-client';
+import { useMemo, useState } from "react"
 
-const socket = io("https://parking-lot--api.herokuapp.com/my-namespace", { path: '/socket.io/my-namespace/' });
-socket.on('connect', () => {
-  console.log('connected')
-})
 
-const ParkingGrid = () => {
-  const [_parkingLot, _setParkingLot] = useState([{
-    id: 1,
-    lot: 'A3',
-    isOccupied: false,
-    gridStart: 'col-start-1 row-start-3'
-  }, {
-    id: 2,
-    lot: 'D2',
-    isOccupied: false,
-    gridStart: 'col-start-4 row-start-2'
-  }, {
-    id: 3,
-    lot: 'B5',
-    isOccupied: false,
-    gridStart: 'col-start-2 row-start-5'
-  }, {
-    id: 4,
-    lot: 'E6',
-    isOccupied: false,
-    gridStart: 'col-start-5 row-start-6'
-  }])
-  const [_isOccupied, _setIsOccupied] = useState<boolean>(false)
-
-  const onClick = (lotId: number) => {
-    const updatedParkingLot = _parkingLot.map(pl =>
-      pl.id === lotId
-        ? { ...pl, isOccupied: !pl.isOccupied }
-        : pl
-    );
-    _setParkingLot(updatedParkingLot)
-    console.log(updatedParkingLot.filter(upl => upl.id)[0].isOccupied)
-    socket.emit('parking-event', lotId, updatedParkingLot.filter(upl => upl.id)[0].isOccupied)
-  }
+const ParkingGrid = ({ busyPositions }) => {
 
   return (
     <ul className="grid grid-cols-6 grid-rows-6 gap-3 cursor-move auto-cols-auto h-[20rem] w-[20rem] sm:h-[35rem] sm:w-[35rem] md:h-[50rem] md:w-[50rem]">
-      {_parkingLot.map((_lot) => (
-        <li key={_lot.id} onClick={() => onClick(_lot.id)}
-          className={`col-span-1 row-span-1 text-center rounded-lg shadow hover:shadow-xl cursor-pointer divide-y divide-gray-200 transition duration-150
-          ${_lot.isOccupied ? 'bg-red-300' : 'bg-green-300'} ${_lot.gridStart}`}
-        >
-          <div className="">
-            <div className="justify-center rounded-full font-semibold text-xl md:text-4xl text-gray-600">
-              <h3 className='self-center'>{_lot.lot}</h3>
-            </div>
+
+      <li key={1}
+        className={`col-span-1 row-span-1 text-center rounded-lg shadow hover:shadow-xl cursor-pointer divide-y divide-gray-200 transition duration-150
+          ${busyPositions[0] === 1 ? 'bg-red-300' : 'bg-green-300'} col-start-1 row-start-3`}
+      >
+        <div className="">
+          <div className="justify-center rounded-full font-semibold text-xl md:text-4xl text-gray-600">
+            <h3 className='self-center'>A3</h3>
           </div>
-        </li>
-      ))}
+        </div>
+      </li>
+
+      <li key={2}
+        className={`col-span-1 row-span-1 text-center rounded-lg shadow hover:shadow-xl cursor-pointer divide-y divide-gray-200 transition duration-150
+          ${busyPositions[1] === 1 ? 'bg-red-300' : 'bg-green-300'} col-start-4 row-start-2`}
+      >
+        <div className="">
+          <div className="justify-center rounded-full font-semibold text-xl md:text-4xl text-gray-600">
+            <h3 className='self-center'>D2</h3>
+          </div>
+        </div>
+      </li>
+
+      <li key={3}
+        className={`col-span-1 row-span-1 text-center rounded-lg shadow hover:shadow-xl cursor-pointer divide-y divide-gray-200 transition duration-150
+          ${busyPositions[2] === 1 ? 'bg-red-300' : 'bg-green-300'} col-start-2 row-start-5`}
+      >
+        <div className="">
+          <div className="justify-center rounded-full font-semibold text-xl md:text-4xl text-gray-600">
+            <h3 className='self-center'>B5</h3>
+          </div>
+        </div>
+      </li>
+
+      <li key={4}
+        className={`col-span-1 row-span-1 text-center rounded-lg shadow hover:shadow-xl cursor-pointer divide-y divide-gray-200 transition duration-150
+          ${busyPositions[3] === 1 ? 'bg-red-300' : 'bg-green-300'} col-start-5 row-start-6`}
+      >
+        <div className="">
+          <div className="justify-center rounded-full font-semibold text-xl md:text-4xl text-gray-600">
+            <h3 className='self-center'>E6</h3>
+          </div>
+        </div>
+      </li>
+
     </ul>
   )
 }

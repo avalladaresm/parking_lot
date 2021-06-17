@@ -3,10 +3,50 @@ import { Login } from '../components/Login'
 import ParkingGrid from '../components/ParkingGrid'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { ArrowsExpandIcon, LogoutIcon, MinusIcon, PlusIcon } from '@heroicons/react/outline'
+import mqtt from 'mqtt'
+
+const client = mqtt.connect('ws://ioticos.org/mqtt', { port: 8093, username: 'c6p3PVo5pHlfWVv', password: 'R1qfPuEQbTe9IYd', clientId: '2423432', clean: true })
+client.setMaxListeners(0)
 
 const Home = () => {
   const [_user, _setUser] = useState({})
   const [_isUserLoggedIn, _setIsUserLoggedIn] = useState(false)
+  const [_busyPositions, _setBusyPositions] = useState([0, 0, 0, 0])
+
+  client.once('connect', () => {
+    client.subscribe('mbkLfaGEf6lAmhw/P1', { qos: 1 }, (err, granted) => {
+      if (err) return
+    })
+    client.subscribe('mbkLfaGEf6lAmhw/P2', { qos: 1 }, (err, granted) => {
+      if (err) return
+    })
+    client.subscribe('mbkLfaGEf6lAmhw/P3', { qos: 1 }, (err, granted) => {
+      if (err) return
+    })
+    client.subscribe('mbkLfaGEf6lAmhw/P4', { qos: 1 }, (err, granted) => {
+      if (err) return
+    })
+  })
+
+  client.once('message', function (topic, message) {
+    const _topic = topic.split('/')[1]
+    const pos = [..._busyPositions]
+    switch (_topic) {
+      case 'P1':
+        pos[0] = message.toString() === '1' ? 1 : 0
+        break;
+      case 'P2':
+        pos[1] = message.toString() === '1' ? 1 : 0
+        break;
+      case 'P3':
+        pos[2] = message.toString() === '1' ? 1 : 0
+        break;
+      case 'P4':
+        pos[3] = message.toString() === '1' ? 1 : 0
+        break;
+    }
+    _setBusyPositions(pos)
+  })
 
   return (
     <div className='bg-gray-200 h-screen pb-20'>
@@ -26,7 +66,7 @@ const Home = () => {
             <div className="mb-20 pt-8">
               <h2 className="text-2xl text-center font-bold leading-7 text-gray-700 sm:text-3xl sm:truncate">
                 Parqueo UNITEC
-            </h2>
+              </h2>
             </div>
             <div className='flex justify-center'>
               <div className='flex flex-col'>
@@ -56,7 +96,7 @@ const Home = () => {
                       </div>
                       <div className='rounded-lg border-4 border-indigo-700 border-opacity-50 border-double'>
                         <TransformComponent>
-                          <ParkingGrid />
+                          <ParkingGrid busyPositions={_busyPositions} />
                         </TransformComponent>
                       </div>
                     </div>

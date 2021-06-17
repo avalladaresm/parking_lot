@@ -9,7 +9,7 @@ export const LoginErrorAlert = ({ setIsAlertVisible, isAlertVisible }) => {
           <ShieldExclamationIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
         </div>
         <div className="ml-3">
-          <p className="text-sm font-medium text-red-800">Número de cuenta o contraseña incorrecta!</p>
+          <p className="text-sm font-medium text-red-800">¡Número de cuenta o contraseña incorrecta!</p>
         </div>
         <div className="ml-auto pl-3">
           <div className="-mx-1.5 -my-1.5">
